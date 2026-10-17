@@ -11,7 +11,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {Product,Admin,Order,Settings} from './models.js';
 
-const app=express();app.use(helmet({crossOriginResourcePolicy:{policy:'cross-origin'},contentSecurityPolicy:{directives:{...helmet.contentSecurityPolicy.getDefaultDirectives(),imgSrc:["'self'",'data:','https://images.unsplash.com']}}}));
+const app=express();app.use(helmet({crossOriginResourcePolicy:{policy:'cross-origin'},contentSecurityPolicy:{directives:{...helmet.contentSecurityPolicy.getDefaultDirectives(),'img-src':["'self'",'data:','https://images.unsplash.com']}}}));
 const allowedOrigins=new Set([process.env.CLIENT_ORIGIN,process.env.RENDER_EXTERNAL_URL,'http://localhost:5173','http://127.0.0.1:5173','http://localhost:5174','http://127.0.0.1:5174'].filter(Boolean));
 app.use(cors({origin(origin,callback){if(!origin||allowedOrigins.has(origin))return callback(null,true);return callback(new Error('Origin not allowed by CORS'))}}));
 app.use(express.json({limit:'30kb'}));
