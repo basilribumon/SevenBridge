@@ -127,3 +127,10 @@ body{overflow-x:hidden}
 .imagepick input{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
 .imagepreview{display:block;max-width:100%;width:160px;height:120px;object-fit:cover;border:1px solid var(--line);border-radius:5px}
 .orderrow small a{color:var(--green);text-decoration:underline}
+
+/* Glass navigation and branded logo lockup */
+.nav{background:rgba(255,250,247,.76);-webkit-backdrop-filter:blur(18px) saturate(155%);backdrop-filter:blur(18px) saturate(155%);border-bottom:1px solid rgba(255,255,255,.66);box-shadow:0 8px 28px rgba(74,24,36,.08)}
+.brand{gap:12px}.brandname{display:grid;gap:3px;color:#78132b;line-height:1}.brandname b{font:700 13px/1.1 var(--sans);letter-spacing:.1em;white-space:nowrap}.brandname small{font:600 8px/1 var(--sans);letter-spacing:.23em;color:#9b6c40}
+.links.show{background:rgba(255,250,247,.96);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+@media(max-width:600px){.brand{gap:7px}.brandname b{font-size:11px;letter-spacing:.07em}.brandname small{font-size:7px}.nav{background:rgba(255,250,247,.82)}}
+@media(max-width:380px){.brandlogo{width:42px;height:42px}.brandname b{font-size:9px;letter-spacing:.05em}.brandname small{font-size:6px;letter-spacing:.16em}.basket span{display:none}.navtools{gap:3px}}
