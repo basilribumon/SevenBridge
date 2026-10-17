@@ -46,7 +46,9 @@ For editing a product, `PUT /api/products/:id` accepts the same fields as produc
 
 ## Deployment
 
-Build the frontend with `npm run build` and serve `dist/` on a static host. Deploy the API separately with `npm run server`, configure the same environment variables, allow the deployed frontend origin in `CLIENT_ORIGIN`, and use a managed MongoDB service with network access limited to the API host. Set HTTPS, a long random JWT secret, and a strong administrator password. Never place database credentials or the JWT secret in frontend variables. Configure the production host to route `/api` to the Express server or update the Vite proxy/hosting rewrite accordingly.
+The repository includes `render.yaml` for a single Render Node web service. It builds the React/Vite site and serves the site and Express API from the same HTTPS origin. In Render, choose **New → Blueprint**, connect this repository, and provide `MONGODB_URI`, `ADMIN_EMAIL`, and a new `ADMIN_PASSWORD` when prompted. Render generates `JWT_SECRET`. Never commit `.env` or put secrets in frontend variables. The deployment uses the configured MongoDB Atlas database; make sure its database user has only the required access to the `seven-bridge` database and its network access allows the service to connect.
+
+Render's free web service sleeps after 15 minutes without traffic, so the first visit after an idle period may take about a minute to wake. Render documents its free services as suitable for testing and previews, not production use. Consider a paid always-on service and a custom domain before relying on this for customer orders.
 
 ## Notes
 

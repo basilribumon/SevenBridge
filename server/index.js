@@ -7,9 +7,15 @@ import rateLimit from 'express-rate-limit';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import {z} from 'zod';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {Product,Admin,Order,Settings} from './models.js';
 
-const app=express();app.use(helmet({crossOriginResourcePolicy:{policy:'cross-origin'}}));app.use(cors({origin:process.env.CLIENT_ORIGIN||'http://localhost:5173'}));app.use(express.json({limit:'30kb'}));
+const app=express();app.use(helmet({crossOriginResourcePolicy:{policy:'cross-origin'}}));
+const allowedOrigins=new Set([process.env.CLIENT_ORIGIN,process.env.RENDER_EXTERNAL_URL,'http://localhost:5173','http://127.0.0.1:5173','http://localhost:5174','http://127.0.0.1:5174'].filter(Boolean));
+app.use(cors({origin(origin,callback){if(!origin||allowedOrigins.has(origin))return callback(null,true);return callback(new Error('Origin not allowed by CORS'))}}));
+app.use(express.json({limit:'30kb'}));
+const distDir=fileURLToPath(new URL('../dist/',import.meta.url));
 const loginLimit=rateLimit({windowMs:15*60*1000,limit:10,standardHeaders:true,legacyHeaders:false});
 const trackLimit=rateLimit({windowMs:15*60*1000,limit:20,standardHeaders:true,legacyHeaders:false});
 const auth=(req,res,next)=>{try{const token=(req.headers.authorization||'').replace(/^Bearer\s+/i,'');const data=jwt.verify(token,process.env.JWT_SECRET);req.adminId=data.id;next()}catch{return res.status(401).json({error:'Authentication required'})}};
@@ -27,6 +33,8 @@ app.get('/api/orders/track',trackLimit,async(req,res,next)=>{try{const name=Stri
 app.get('/api/admin/summary',auth,async(req,res,next)=>{try{const [totalProducts,activeProducts,outOfStock,totalOrders,pending,confirmed]=await Promise.all([Product.countDocuments(),Product.countDocuments({active:true}),Product.countDocuments({active:true,stock:0}),Order.countDocuments(),Order.countDocuments({status:'pending'}),Order.countDocuments({status:'confirmed'})]);res.json({totalProducts,activeProducts,outOfStock,totalOrders,pending,confirmed})}catch(e){next(e)}});
 app.get('/api/orders',auth,async(req,res,next)=>{try{res.json(await Order.find().sort({createdAt:-1}).limit(250).lean())}catch(e){next(e)}});
 app.patch('/api/orders/:id/status',auth,async(req,res,next)=>{try{const status=z.enum(['pending','confirmed','preparing','ready','completed','cancelled']).parse(req.body.status);const o=await Order.findByIdAndUpdate(req.params.id,{status},{new:true,runValidators:true});if(!o)return res.status(404).json({error:'Order not found'});res.json(o)}catch(e){next(e)}});
+app.use(express.static(distDir));
+app.get('*',(req,res,next)=>{if(req.path.startsWith('/api/'))return next();res.sendFile(path.join(distDir,'index.html'),error=>{if(error)next(error)})});
 app.use((err,req,res,next)=>{if(err instanceof z.ZodError)return res.status(400).json({error:'Invalid input',details:err.issues.map(x=>({field:x.path.join('.'),message:x.message}))});console.error(err);res.status(err.status||500).json({error:err.status?err.message:'Unexpected server error'})});
 const port=Number(process.env.PORT)||4000;
 if(!process.env.MONGODB_URI)console.error('MONGODB_URI is missing. Copy .env.example to .env and configure it.');else mongoose.connect(process.env.MONGODB_URI).then(()=>{console.log('Connected to MongoDB');app.listen(port,()=>console.log(`Seven Bridge API listening on ${port}`))}).catch(e=>{console.error('MongoDB connection failed:',e.message);process.exit(1)});
