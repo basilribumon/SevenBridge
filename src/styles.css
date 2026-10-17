@@ -119,3 +119,11 @@ body{overflow-x:hidden}
 }
 @media(max-width:380px){.wrap{width:calc(100% - 24px)}.topin span:first-child{font-size:11px}.topin span+span{font-size:10px}.navtools{gap:2px}.brandlogo{width:46px;height:46px}.basket{padding:8px}.hero h1{font-size:44px}.herobtns .btn{padding:11px 12px;font-size:12px}.productmeta h3{font-size:13px}.addbtn{padding:0 8px;font-size:11px}.footerin{grid-template-columns:1fr 1fr}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.intro.revealed,.categoryrow.revealed,.shopsection.revealed,.offer.revealed,.story.revealed,.visit.revealed,.intro.revealed>*,.categoryrow.revealed .catcard,.shopsection.revealed .product,.offer.revealed>*,.story.revealed>*,.visit.revealed .visitdetails>*{animation:none!important}}
+
+.adminform select{width:100%;border:1px solid #f0e2e0;background:#fff;color:var(--ink);border-radius:3px;padding:12px;font:inherit;min-height:48px}
+.imageadmin{display:grid;gap:10px}
+.imageactions{display:flex;gap:10px;flex-wrap:wrap}
+.imagepick{display:inline-flex!important;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:4px;padding:10px 14px;color:var(--green);font-weight:600;cursor:pointer}
+.imagepick input{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
+.imagepreview{display:block;max-width:100%;width:160px;height:120px;object-fit:cover;border:1px solid var(--line);border-radius:5px}
+.orderrow small a{color:var(--green);text-decoration:underline}
